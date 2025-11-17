@@ -51,7 +51,7 @@ function resetInline(input, placeholderText) {
 });
 
 /* -------------------------
-   LIVE VALIDATION
+     LIVE VALIDATION
 -------------------------- */
 
 // NAME VALIDATION
@@ -279,3 +279,4 @@ function onEdit(e) {
 -------------------------- */
 resetPlaceholders();
 loadStudents();
+
