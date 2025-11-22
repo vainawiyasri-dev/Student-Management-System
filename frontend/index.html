@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Student CRUD - Inline Validation</title>
+<link rel="stylesheet" href="style.css" />
+<script src="script.js" defer></script>
+</head>
+<body>
+  <div class="card">
+    <h2>Student Management System</h2>
+
+    <form id="studentForm" novalidate>
+      <div class="field">
+        <input id="name" type="text" placeholder="Name" autocomplete="off" />
+        
+      </div>
+
+      <div class="field">
+        <input id="age" type="number" placeholder="Age (1-100)" autocomplete="off" />
+  
+      </div>
+
+      <div class="field">
+        <input id="course" type="text" placeholder="Course" autocomplete="off" />
+       
+      </div>
+
+
+      <div class="field">
+        <button id="submitBtn" type="submit">Add Student</button>
+      </div>
+    </form>
+  </div>
+
+  <div class="card">
+    <table>
+      <thead>
+        <tr><th>Name</th><th>Age</th><th>Course</th><th>Actions</th></tr>
+      </thead>
+      <tbody id="studentTableBody"></tbody>
+    </table>
+  </div>
+</body>
+</html>
