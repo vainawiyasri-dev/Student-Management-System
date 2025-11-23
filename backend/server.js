@@ -107,14 +107,16 @@ app.use('/students/:any', (req, res) => {
     res.status(404).json({ message: "API route not found" });
 });
 
-// Serve frontend static files
+// In server.js
 app.use(express.static(path.join(__dirname, "../frontend")));
 
 // Catch-all for frontend routes
 app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, "../frontend/index.html"));
+  res.sendFile(path.join(__dirname, "../frontend/index.html"));
 });
+
 
 // Start server
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+
 
