@@ -1,4 +1,5 @@
-const API_URL = "http://localhost:5000/students";
+const API_URL = "https://student-management-system-2-xdy3.onrender.com/students";
+
 
 const nameInput = document.getElementById('name');
 const ageInput = document.getElementById('age');
@@ -279,3 +280,4 @@ function onEdit(e) {
 -------------------------- */
 resetPlaceholders();
 loadStudents();
+
