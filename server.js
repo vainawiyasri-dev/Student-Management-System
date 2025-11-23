@@ -3,6 +3,8 @@ const express = require("express");
 const cors = require("cors");
 const path = require("path");
 const mongoose = require("mongoose");
+const Student = require("./models/Student");
+const client = require('prom-client');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -11,106 +13,101 @@ const PORT = process.env.PORT || 5000;
 app.use(cors());
 app.use(express.json());
 
-// Connect to MongoDB
-mongoose.connect(process.env.MONGO_URI || "mongodb://127.0.0.1:27017/studentsDB", {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-})
-.then(() => console.log("MongoDB connected"))
-.catch(err => console.error("MongoDB connection error:", err));
+// MongoDB connection
+if (!process.env.MONGO_URI) {
+    console.error("Error: MONGO_URI not set in .env");
+    process.exit(1);
+}
 
-// Student Schema with timestamps
-const studentSchema = new mongoose.Schema({
-    name: { type: String, required: true },
-    age: { type: Number, required: true },
-    course: { type: String, required: true }
-}, { timestamps: true });
+mongoose.connect(process.env.MONGO_URI)
+    .then(() => console.log("MongoDB Connected"))
+    .catch(err => {
+        console.error("MongoDB connection error:", err);
+        process.exit(1);
+    });
 
-const Student = mongoose.model("Student", studentSchema);
+// Prometheus metrics
+client.collectDefaultMetrics({ timeout: 5000 });
 
+// Health check
+app.get('/health', (req, res) => {
+    res.json({ status: 'ok', time: new Date().toISOString() });
+});
 
-// CRUD ROUTES
+// Metrics endpoint
+app.get('/metrics', async (req, res) => {
+    res.set('Content-Type', client.register.contentType);
+    res.end(await client.register.metrics());
+});
 
+// CRUD ROUTES 
+
+// Create student
+app.post("/students", async (req, res) => {
+    try {
+        const { name, age, course } = req.body;
+        if (!name || !age || !course) return res.status(400).json({ error: "All fields required" });
+        const student = await Student.create({ name, age, course });
+        res.status(201).json(student);
+    } catch (error) {
+        res.status(500).json({ error: "Server error" });
+    }
+});
 
 // Get all students
 app.get("/students", async (req, res) => {
     try {
         const students = await Student.find();
-        res.status(200).json(students);
-    } catch (error) {
-        res.status(500).json({ message: "Server error" });
+        res.json(students);
+    } catch {
+        res.status(500).json({ error: "Server error" });
     }
 });
 
-// Add student
-app.post("/students", async (req, res) => {
-    const { name, age, course } = req.body;
-
-    if (!name || !age || !course) {
-        return res.status(400).json({ message: "All fields are required" });
-    }
-
+// Get single student
+app.get("/students/:id", async (req, res) => {
     try {
-        const newStudent = await Student.create({ name, age, course });
-        res.status(201).json(newStudent);
-    } catch (error) {
-        res.status(500).json({ message: "Server error" });
+        const student = await Student.findById(req.params.id);
+        if (!student) return res.status(404).json({ error: "Not found" });
+        res.json(student);
+    } catch {
+        res.status(400).json({ error: "Invalid ID" });
     }
 });
 
 // Update student
 app.put("/students/:id", async (req, res) => {
-    const { id } = req.params;
-    const { name, age, course } = req.body;
-
     try {
-        const student = await Student.findByIdAndUpdate(
-            id,
-            { name, age, course },
-            { new: true, runValidators: true }
-        );
-
-        if (!student) {
-            return res.status(404).json({ message: "Student not found" });
-        }
-
-        res.status(200).json(student);
-    } catch (error) {
-        res.status(500).json({ message: "Server error" });
+        const student = await Student.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
+        if (!student) return res.status(404).json({ error: "Not found" });
+        res.json(student);
+    } catch {
+        res.status(400).json({ error: "Invalid ID" });
     }
 });
 
 // Delete student
 app.delete("/students/:id", async (req, res) => {
-    const { id } = req.params;
-
     try {
-        const student = await Student.findByIdAndDelete(id);
-
-        if (!student) {
-            return res.status(404).json({ message: "Student not found" });
-        }
-
-        res.status(200).json({ message: "Student deleted" });
-    } catch (error) {
-        res.status(500).json({ message: "Server error" });
+        const student = await Student.findByIdAndDelete(req.params.id);
+        if (!student) return res.status(404).json({ error: "Not found" });
+        res.json({ message: "Deleted" });
+    } catch {
+        res.status(400).json({ error: "Invalid ID" });
     }
 });
 
-
-// API 404 Handler
-
-app.use('/students/*', (req, res) => {
+// API 404 for /students
+app.use('/students/:any', (req, res) => {
     res.status(404).json({ message: "API route not found" });
 });
 
-
 // Serve frontend
-
 app.use(express.static(path.join(__dirname, "../frontend")));
 
-app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, "../frontend/index.html"));
+// Catch-all for SPA frontend
+app.get('/:any', (req, res) => {
+    res.sendFile(path.join(__dirname, "frontend", "index.html"));
 });
 
 // Start server
