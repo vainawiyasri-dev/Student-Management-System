@@ -5,8 +5,7 @@ const path = require("path");
 const mongoose = require("mongoose");
 const Student = require("./models/Student");
 const client = require('prom-client');
-console.log('PORT:', process.env.PORT);
-console.log('MONGO_URI:', process.env.MONGO_URI ? 'exists' : 'missing');
+
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -114,3 +113,4 @@ app.get('/:any', (req, res) => {
 
 // Start server
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+
