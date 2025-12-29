@@ -1,4 +1,4 @@
-🎓Student Management System – MERN Capstone Project
+🎓 STUDENT MANAGEMENT SYSTEM – MERN CAPSTONE PROJECT
 
 A full-stack MERN application to manage student records with secure authentication, role-based access, and complete CRUD functionality. This project provides the core foundation for a final capstone project.
 
