@@ -87,27 +87,27 @@ student-management-system/
 
 1️⃣ Register Page
 User registration form with validation.
-![Register Page](screenshots/register.png)
+![Register Page](App.screenshots/register.png)
 
 2️⃣ Login Page
 Secure login with JWT token.
-![Login Page](screenshots/login.png)
+![Login Page](App.screenshots/login.png)
 
 3️⃣ Dashboard – Admin View
 Admins can view and manage all students.
-![Dashboard Admin](screenshots/dashboard-admin.png)
+![Dashboard Admin](App.screenshots/dashboard-admin.png)
 
 4️⃣ Dashboard – User View
 Users can view/manage only their own students.
-![Dashboard User](screenshots/dashboard-user.png)
+![Dashboard User](App.screenshots/dashboard-user.png)
 
 5️⃣ Add / Edit Student Form
 All input fields are equal size; dropdowns appear below inputs.
-![Add/Edit Student](screenshots/add-edit-student.png)
+![Add/Edit Student](App.screenshots/add-edit-student.png)
 
 6️⃣ Delete Confirmation
 Ensures safe deletion of records.
-![Delete Confirmation](screenshots/delete-student.png)
+![Delete Confirmation](App.screenshots/delete-student.png)
 
 ---
 
